@@ -34,8 +34,8 @@ public class Shadows
 		cascadeCullingSpheres = new Vector4[maxCascades],
 		cascadeData = new Vector4[maxCascades];
 
-	static Matrix4x4[]
-		dirShadowMatrices = new Matrix4x4[maxShadowedDirLightCount * maxCascades];
+	//creating a shadow transformation matrix for each shadowed directional light and sending them to the GPU
+	static Matrix4x4[] dirShadowMatrices = new Matrix4x4[maxShadowedDirLightCount * maxCascades];
 
 	struct ShadowedDirectionalLight 
 	{
@@ -139,10 +139,9 @@ public class Shadows
 		}
 
 		buffer.SetGlobalInt(cascadeCountId, settings.directional.cascadeCount);
-		buffer.SetGlobalVectorArray(
-			cascadeCullingSpheresId, cascadeCullingSpheres
-		);
+		buffer.SetGlobalVectorArray(cascadeCullingSpheresId, cascadeCullingSpheres);
 		buffer.SetGlobalVectorArray(cascadeDataId, cascadeData);
+		
 		buffer.SetGlobalMatrixArray(dirShadowMatricesId, dirShadowMatrices);
 		float f = 1f - settings.directional.cascadeFade;
 		buffer.SetGlobalVector(shadowDistanceFadeId, new Vector4(1f / settings.maxDistance, 1f / settings.distanceFade,1f / (1f - f * f)));
@@ -171,13 +170,11 @@ public class Shadows
 	void RenderDirectionalShadows (int index, int split, int tileSize) 
 	{
 		ShadowedDirectionalLight light = shadowedDirectionalLights[index];
-		var shadowSettings =
-			new ShadowDrawingSettings(cullingResults, light.visibleLightIndex);
+		var shadowSettings = new ShadowDrawingSettings(cullingResults, light.visibleLightIndex);
 		int cascadeCount = settings.directional.cascadeCount;
 		int tileOffset = index * cascadeCount;
 		Vector3 ratios = settings.directional.CascadeRatios;
-		float cullingFactor =
-            Mathf.Max(0f, 0.8f - settings.directional.cascadeFade);
+		float cullingFactor = Mathf.Max(0f, 0.8f - settings.directional.cascadeFade);
 
 		for (int i = 0; i < cascadeCount; i++) 
 		{
@@ -212,10 +209,7 @@ public class Shadows
 		cullingSphere.w -= filterSize;
 		cullingSphere.w *= cullingSphere.w;
 		cascadeCullingSpheres[index] = cullingSphere;
-		cascadeData[index] = new Vector4(
-			1f / cullingSphere.w,
-			filterSize * 1.4142136f
-		);
+		cascadeData[index] = new Vector4(1f / cullingSphere.w, filterSize * 1.4142136f);
 	}
 
 	Matrix4x4 ConvertToAtlasMatrix (Matrix4x4 m, Vector2 offset, int split)

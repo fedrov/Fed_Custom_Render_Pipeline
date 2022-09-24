@@ -90,22 +90,22 @@ public partial class CameraRenderer
 
 	void DrawVisibleGeometry (bool useDynamicBatching, bool useGPUInstancing) 
 	{
-		var sortingSettings = new SortingSettings(camera) {
+		var sortingSettings = new SortingSettings(camera) 
+		{
 			criteria = SortingCriteria.CommonOpaque
 		};
-		var drawingSettings = new DrawingSettings(
-			unlitShaderTagId, sortingSettings
-		) {
+		var drawingSettings = new DrawingSettings(unlitShaderTagId, sortingSettings) 
+		{
 			enableDynamicBatching = useDynamicBatching,
-			enableInstancing = useGPUInstancing
+			enableInstancing = useGPUInstancing,
+			//send per object light map or lightprobe data to GPU
+			perObjectData = PerObjectData.Lightmaps | PerObjectData.LightProbe | PerObjectData.LightProbeProxyVolume
 		};
 		drawingSettings.SetShaderPassName(1, litShaderTagId);
 
 		var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
 
-		context.DrawRenderers(
-			cullingResults, ref drawingSettings, ref filteringSettings
-		);
+		context.DrawRenderers(cullingResults, ref drawingSettings, ref filteringSettings);
 
 		context.DrawSkybox(camera);
 
@@ -113,8 +113,6 @@ public partial class CameraRenderer
 		drawingSettings.sortingSettings = sortingSettings;
 		filteringSettings.renderQueueRange = RenderQueueRange.transparent;
 
-		context.DrawRenderers(
-			cullingResults, ref drawingSettings, ref filteringSettings
-		);
+		context.DrawRenderers(cullingResults, ref drawingSettings, ref filteringSettings);
 	}
 }
