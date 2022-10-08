@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/static lighting.unity
+- path: Assets/Scenes/IndirectBRDF.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

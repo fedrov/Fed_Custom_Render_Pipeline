@@ -12,6 +12,7 @@
 
 		_Metallic ("Metallic", Range(0, 1)) = 0
 		_Smoothness ("Smoothness", Range(0, 1)) = 0.5
+		_Fresnel ("Fresnel", Range(0, 1)) = 1
 
 		[NoScaleOffset] _EmissionMap("Emission", 2D) = "white" {}
 		[HDR] _EmissionColor("Emission", Color) = (0.0, 0.0, 0.0, 0.0)
@@ -21,6 +22,7 @@
 		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Src Blend", Float) = 1
 		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Dst Blend", Float) = 0
 		[Enum(Off, 0, On, 1)] _ZWrite ("Z Write", Float) = 1
+		
 		//Unity's lightmapper has a hard-coded approach for transparency. It looks at the material's queue to determine whether it's opaque, clipped, or transparent.
 		//It then determines transparency by multiplying the alpha components of a _MainTex and _Color property, using the _Cutoff property for alpha clipping.
 		[HideInInspector] _MainTex("Texture for Lightmap", 2D) = "white" {}
