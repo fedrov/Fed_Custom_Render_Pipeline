@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Opague 1
   m_Shader: {fileID: 4800000, guid: d2c448af154f94dda8a9c42d2b0171f0, type: 3}
-  m_ShaderKeywords: _RECEIVE_SHADOWS
+  m_ShaderKeywords: _MASK_MAP _NORMALMAP _RECEIVE_SHADOWS
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -20,8 +20,8 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: bb0d9a99d1b7c3c43a4bb051356104c7, type: 3}
+        m_Scale: {x: 1.42, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
@@ -31,24 +31,36 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DetailMap:
+        m_Texture: {fileID: 2800000, guid: 38e082fc9857a1a40b60bb214d28b58f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 55eaf6f1444a7d545af88debb0fb8711, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: ac3dafbed8e9abb4d8add4752919cb3b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MaskMap:
+        m_Texture: {fileID: 2800000, guid: 5d7e2eb9e54de8a4eafdffff249ea69c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal:
+        m_Texture: {fileID: 2800000, guid: 895d7b6f09afa374f92fdc8615b286c1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -63,20 +75,30 @@ Material:
     - _BumpScale: 1
     - _Clipping: 0
     - _Cutoff: 0.5
+    - _DetailAlbedo: 0
+    - _DetailMapToggle: 0
     - _DetailNormalMapScale: 1
+    - _DetailNormalScale: 1
+    - _DetailSmoothness: 0
     - _DstBlend: 0
+    - _Fresnel: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _MaskMapToggle: 1
     - _Metallic: 0
     - _Mode: 0
+    - _NormalIntensity: 1
+    - _NormalMapToogle: 1
+    - _Normalscale: 1
+    - _Occlusion: 0.54
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _PremulAlpha: 0
     - _PremulAlphax: 0
     - _ReceiveShadows: 1
     - _Shadows: 0
-    - _Smoothness: 0.5
+    - _Smoothness: 0.86
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -85,4 +107,4 @@ Material:
     m_Colors:
     - _BaseColor: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0.0007314645, g: 0.0007314645, b: 0.0007314645, a: 1}
+    - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}

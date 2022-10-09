@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/Scenes/IndirectBRDF.unity
+- path: Assets/Scenes/Complex Mat.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0

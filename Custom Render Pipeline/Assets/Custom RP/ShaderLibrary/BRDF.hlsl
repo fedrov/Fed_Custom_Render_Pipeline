@@ -58,7 +58,7 @@ float3 IndirectBRDF (Surface surface, BRDF brdf, float3 diffuse, float3 specular
 	float3 reflection = specular * lerp(brdf.specular, brdf.fresnel, fresnelStrength);
 	//reduce the specualr reflection if roughness goes up, when roughness = 1, halves the reflection
 	reflection /= brdf.roughness * brdf.roughness + 1;
-	return diffuse * brdf.diffuse + reflection;
+	return (diffuse * brdf.diffuse + reflection) * surface.occlusion;
 }
 
 
