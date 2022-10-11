@@ -1,8 +1,6 @@
-﻿Shader "Custom RP/Unlit" 
-{
+﻿Shader "Custom RP/Unlit" {
 	
-	Properties 
-	{
+	Properties {
 		_BaseMap("Texture", 2D) = "white" {}
 		[HDR] _BaseColor("Color", Color) = (1.0, 1.0, 1.0, 1.0)
 		_Cutoff ("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
@@ -14,16 +12,13 @@
 		[Enum(Off, 0, On, 1)] _ZWrite ("Z Write", Float) = 1
 	}
 	
-	SubShader 
-	{
-
+	SubShader {
 		HLSLINCLUDE
 		#include "../ShaderLibrary/Common.hlsl"
 		#include "UnlitInput.hlsl"
 		ENDHLSL
 
-		Pass 
-		{
+		Pass {
 			Blend [_SrcBlend] [_DstBlend]
 			ZWrite [_ZWrite]
 
@@ -37,10 +32,8 @@
 			ENDHLSL
 		}
 
-		Pass 
-		{
-			Tags 
-			{
+		Pass {
+			Tags {
 				"LightMode" = "ShadowCaster"
 			}
 
@@ -56,10 +49,8 @@
 			ENDHLSL
 		}
 
-		Pass 
-		{
-			Tags 
-			{
+		Pass {
+			Tags {
 				"LightMode" = "Meta"
 			}
 
