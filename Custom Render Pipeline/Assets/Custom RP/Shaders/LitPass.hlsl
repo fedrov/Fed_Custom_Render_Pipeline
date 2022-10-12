@@ -8,7 +8,8 @@
 #include "../ShaderLibrary/GI.hlsl"
 #include "../ShaderLibrary/Lighting.hlsl"
 
-struct Attributes {
+struct Attributes 
+{
 	float3 positionOS : POSITION;
 	float3 normalOS : NORMAL;
 	float4 tangentOS : TANGENT;
@@ -17,7 +18,8 @@ struct Attributes {
 	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
-struct Varyings {
+struct Varyings 
+{
 	float4 positionCS : SV_POSITION;
 	float3 positionWS : VAR_POSITION;
 	float3 normalWS : VAR_NORMAL;
@@ -32,7 +34,8 @@ struct Varyings {
 	UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
-Varyings LitPassVertex (Attributes input) {
+Varyings LitPassVertex (Attributes input) 
+{
 	Varyings output;
 	UNITY_SETUP_INSTANCE_ID(input);
 	UNITY_TRANSFER_INSTANCE_ID(input, output);
@@ -41,9 +44,7 @@ Varyings LitPassVertex (Attributes input) {
 	output.positionCS = TransformWorldToHClip(output.positionWS);
 	output.normalWS = TransformObjectToWorldNormal(input.normalOS);
 	#if defined(_NORMAL_MAP)
-		output.tangentWS = float4(
-			TransformObjectToWorldDir(input.tangentOS.xyz), input.tangentOS.w
-		);
+		output.tangentWS = float4(TransformObjectToWorldDir(input.tangentOS.xyz), input.tangentOS.w);
 	#endif
 	output.baseUV = TransformBaseUV(input.baseUV);
 	#if defined(_DETAIL_MAP)
@@ -52,7 +53,8 @@ Varyings LitPassVertex (Attributes input) {
 	return output;
 }
 
-float4 LitPassFragment (Varyings input) : SV_TARGET {
+float4 LitPassFragment (Varyings input) : SV_TARGET 
+{
 	UNITY_SETUP_INSTANCE_ID(input);
 	ClipLOD(input.positionCS.xy, unity_LODFade.x);
 	
@@ -73,9 +75,7 @@ float4 LitPassFragment (Varyings input) : SV_TARGET {
 	Surface surface;
 	surface.position = input.positionWS;
 	#if defined(_NORMAL_MAP)
-		surface.normal = NormalTangentToWorld(
-			GetNormalTS(config), input.normalWS, input.tangentWS
-		);
+		surface.normal = NormalTangentToWorld(GetNormalTS(config), input.normalWS, input.tangentWS);
 		surface.interpolatedNormal = input.normalWS;
 	#else
 		surface.normal = normalize(input.normalWS);

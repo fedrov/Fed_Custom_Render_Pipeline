@@ -25,13 +25,15 @@ public partial class CameraRenderer {
 		ScriptableRenderContext context, Camera camera,
 		bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject,
 		ShadowSettings shadowSettings
-	) {
+	) 
+	{
 		this.context = context;
 		this.camera = camera;
 
 		PrepareBuffer();
 		PrepareForSceneWindow();
-		if (!Cull(shadowSettings.maxDistance)) {
+		if (!Cull(shadowSettings.maxDistance)) 
+		{
 			return;
 		}
 		
@@ -51,8 +53,10 @@ public partial class CameraRenderer {
 		Submit();
 	}
 
-	bool Cull (float maxShadowDistance) {
-		if (camera.TryGetCullingParameters(out ScriptableCullingParameters p)) {
+	bool Cull (float maxShadowDistance) 
+	{
+		if (camera.TryGetCullingParameters(out ScriptableCullingParameters p)) 
+		{
 			p.shadowDistance = Mathf.Min(maxShadowDistance, camera.farClipPlane);
 			cullingResults = context.Cull(ref p);
 			return true;
@@ -60,7 +64,8 @@ public partial class CameraRenderer {
 		return false;
 	}
 
-	void Setup () {
+	void Setup () 
+	{
 		context.SetupCameraProperties(camera);
 		CameraClearFlags flags = camera.clearFlags;
 		buffer.ClearRenderTarget(
@@ -73,29 +78,30 @@ public partial class CameraRenderer {
 		ExecuteBuffer();
 	}
 
-	void Submit () {
+	void Submit ()
+	{
 		buffer.EndSample(SampleName);
 		ExecuteBuffer();
 		context.Submit();
 	}
 
-	void ExecuteBuffer () {
+	void ExecuteBuffer () 
+	{
 		context.ExecuteCommandBuffer(buffer);
 		buffer.Clear();
 	}
 
-	void DrawVisibleGeometry (
-		bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject
-	) {
+	void DrawVisibleGeometry (bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject) 
+	{
 		PerObjectData lightsPerObjectFlags = useLightsPerObject ?
 			PerObjectData.LightData | PerObjectData.LightIndices :
 			PerObjectData.None;
-		var sortingSettings = new SortingSettings(camera) {
+		var sortingSettings = new SortingSettings(camera) 
+		{
 			criteria = SortingCriteria.CommonOpaque
 		};
-		var drawingSettings = new DrawingSettings(
-			unlitShaderTagId, sortingSettings
-		) {
+		var drawingSettings = new DrawingSettings(unlitShaderTagId, sortingSettings) 
+		{
 			enableDynamicBatching = useDynamicBatching,
 			enableInstancing = useGPUInstancing,
 			perObjectData =
@@ -110,9 +116,7 @@ public partial class CameraRenderer {
 
 		var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
 
-		context.DrawRenderers(
-			cullingResults, ref drawingSettings, ref filteringSettings
-		);
+		context.DrawRenderers(cullingResults, ref drawingSettings, ref filteringSettings);
 
 		context.DrawSkybox(camera);
 
@@ -120,8 +124,6 @@ public partial class CameraRenderer {
 		drawingSettings.sortingSettings = sortingSettings;
 		filteringSettings.renderQueueRange = RenderQueueRange.transparent;
 
-		context.DrawRenderers(
-			cullingResults, ref drawingSettings, ref filteringSettings
-		);
+		context.DrawRenderers(cullingResults, ref drawingSettings, ref filteringSettings);
 	}
 }
