@@ -74,6 +74,7 @@ public class Shadows
 		public int visibleLightIndex;
 		public float slopeScaleBias;
 		public float normalBias;
+		public bool isPointLight;
 	}
 	ShadowedOtherLight[] shadowedOtherLights = new ShadowedOtherLight[maxShadowedOtherLightCount];
 
@@ -172,26 +173,33 @@ public class Shadows
 			useShadowMask = true;
 			maskChannel = lightBaking.occlusionMaskChannel;	
 		}
-
+		//point light is considered as 6 normal light since its shadow is rendered as a cube map
+		bool isPointLight = (light.type == LightType.Point);
+		int newLightCount = shadowedOtherLightCount + (isPointLight ? 6 : 1);
 		if (
-		shadowedOtherLightCount >= maxShadowedOtherLightCount ||
+		newLightCount >= maxShadowedOtherLightCount ||
 		!cullingResults.GetShadowCasterBounds(visibleLightIndex, out Bounds b)
 		) 
 		{
 			return new Vector4(-light.shadowStrength, 0f, 0f, maskChannel);
 		}
 
+		//fill in the shadowedOtherLight struct
 		shadowedOtherLights[shadowedOtherLightCount] = new ShadowedOtherLight
 		{
 			visibleLightIndex = visibleLightIndex,
 			slopeScaleBias = light.shadowBias,
-			normalBias = light.shadowNormalBias
+			normalBias = light.shadowNormalBias,
+			isPointLight = isPointLight
 		};
 
-		return new Vector4(
-				light.shadowStrength, shadowedOtherLightCount++, 0f,
+		//store whether its a point light in the third component to make the shader easy to detect
+		Vector4 data = new Vector4(
+				light.shadowStrength, shadowedOtherLightCount++, isPointLight ? 1f : 0f,
 				lightBaking.occlusionMaskChannel
 			);
+		shadowedOtherLightCount = newLightCount;
+		return data;
 	}
 
 	public void Render () 
@@ -296,9 +304,19 @@ public class Shadows
 		int split = tiles <= 1 ? 1 : tiles <= 4 ? 2 : 4;
 		int tileSize = atlasSize / split;
 
-		for (int i = 0; i < shadowedOtherLightCount; i++) 
+		for (int i = 0; i < shadowedOtherLightCount;) 
 		{
-			RenderSpotShadows(i, split, tileSize);
+			if(shadowedOtherLights[i].isPointLight)
+			{
+				RenderPointShadows(i, split, tileSize);
+				i+=6;
+			}
+			else
+			{
+				RenderSpotShadows(i, split, tileSize);
+				i++;
+			}
+			
 		}
  
 		buffer.SetGlobalMatrixArray(otherShadowMatricesId, otherShadowMatrices);
@@ -308,6 +326,50 @@ public class Shadows
 
 		buffer.EndSample(bufferName);
 		ExecuteBuffer();
+	}
+
+	void RenderPointShadows (int index, int split, int tileSize) 
+	{
+		ShadowedOtherLight light = shadowedOtherLights[index];
+		var shadowSettings = new ShadowDrawingSettings(cullingResults, light.visibleLightIndex);
+		//the field of view of the cubemap is constant thus the tile size is always 2
+		float texelSize = 2f / tileSize;
+		float filterSize = texelSize * ((float)settings.other.filter + 1f);
+		float bias = light.normalBias * filterSize * 1.4142136f;
+		float tileScale = 1f / split;
+
+		//apply field of view bias to prevent cubemap discontinuity
+		float fovBias = Mathf.Atan(1f + bias + filterSize) * Mathf.Rad2Deg * 2f - 90f;
+
+		for(int i =0; i<6;i++)
+		{
+			cullingResults.ComputePointShadowMatricesAndCullingPrimitives(
+			light.visibleLightIndex,(CubemapFace)i, fovBias, out Matrix4x4 viewMatrix,
+			out Matrix4x4 projectionMatrix, out ShadowSplitData splitData
+			);
+			//negate the up side down shadow rendering by unity
+			//Unity renders shadows for point lights. It draws them upside down, which reverses the winding order of triangles
+			//flip the second row of the view matrix, this flip everying up side down in the atlas
+			//NOTE!: in newer version of srp this is fixed by default, so the negatation is unnecessary
+			// viewMatrix.m11 = -viewMatrix.m11;
+			// viewMatrix.m12 = -viewMatrix.m12;
+			// viewMatrix.m13 = -viewMatrix.m13;
+		
+			shadowSettings.splitData = splitData;
+			int tileIndex = index + i;
+			//derive the correct texelsize and normal bias to reduce the acne artifact
+			
+			Vector2 offset = SetTileViewport(tileIndex, split, tileSize);
+			
+			SetOtherTileData(tileIndex,offset, tileScale, bias);
+			otherShadowMatrices[tileIndex] = ConvertToAtlasMatrix(projectionMatrix * viewMatrix, offset, tileScale);
+
+			buffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
+			buffer.SetGlobalDepthBias(0f, light.slopeScaleBias);
+			ExecuteBuffer();
+			context.DrawShadows(ref shadowSettings);
+			buffer.SetGlobalDepthBias(0f, 0f);
+		}
 	}
 
 	void SetOtherTileData(int index, Vector2 offset, float scale, float bias)
