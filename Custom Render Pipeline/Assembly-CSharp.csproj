@@ -44,6 +44,7 @@
      <Compile Include="Assets\Custom RP\Runtime\CustomRenderPipeline.cs" />
      <Compile Include="Assets\Custom RP\Runtime\CustomRenderPipelineAsset.cs" />
      <Compile Include="Assets\Custom RP\Runtime\Lighting.cs" />
+     <Compile Include="Assets\Custom RP\Runtime\PostFXSettings.cs" />
      <Compile Include="Assets\Custom RP\Runtime\ShadowSettings.cs" />
      <Compile Include="Assets\Custom RP\Runtime\Shadows.cs" />
      <None Include="Assets\Custom RP\ShaderLibrary\Surface.hlsl" />
